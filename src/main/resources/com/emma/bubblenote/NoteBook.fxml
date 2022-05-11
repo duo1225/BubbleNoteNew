@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefHeight="461.0" prefWidth="699.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.emma.bubblenote.NoteBookController">
+    <center>
+        <TextArea fx:id="ta" prefHeight="434.0" prefWidth="658.0" BorderPane.alignment="CENTER" />
+    </center>
+    <top>
+        <MenuBar BorderPane.alignment="CENTER">
+            <menus>
+                <Menu mnemonicParsing="false" text="Ficher">
+                    <items>
+                        <MenuItem fx:id="NewMenu" mnemonicParsing="false" onAction="#onNewMenu" text="Creat" />
+                        <MenuItem fx:id="OpenMenu" mnemonicParsing="false" onAction="#onOpenMenu" text="Open" />
+                        <MenuItem fx:id="SaveMenu" mnemonicParsing="false" onAction="#onSaveMenu" text="Save" />
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                    <items>
+                        <MenuItem fx:id="FindMenu" mnemonicParsing="false" onAction="#onFindMenu" text="Search" />
+                        <MenuItem fx:id="ReplaceMenu" mnemonicParsing="false" onAction="#onReplaceMenu" text="Replace" />
+                        <MenuItem fx:id="Undo" mnemonicParsing="false" onAction="#onUndoMenu" text="Revoke" />
+                        <MenuItem fx:id="Redo" mnemonicParsing="false" onAction="#onRedoMenu" text="Redo" />
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Format">
+                    <items>
+                        <CheckMenuItem fx:id="WrapMenu" mnemonicParsing="false" onAction="#onWrapMenu" text="word warp" />
+                        <MenuItem fx:id="TypefaceMenu" mnemonicParsing="false" onAction="#onTypefaceMenu" text="Font" />
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Check">
+                    <items>
+                        <CheckMenuItem fx:id="StateMenu" mnemonicParsing="false" onAction="#onStateMenu" text="Status Bar" />
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+    </top>
+    <bottom>
+        <Label fx:id="label" text="状态栏" BorderPane.alignment="CENTER" />
+    </bottom>
+</BorderPane>
+
+

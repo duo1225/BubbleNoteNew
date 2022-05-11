@@ -1,7 +1,8 @@
 module com.emma.bubblenote {
+    requires javafx.graphics;
     requires javafx.controls;
     requires javafx.fxml;
-    requires javafx.graphics;
+    requires java.sql;
 
 
     opens com.emma.bubblenote to javafx.fxml;

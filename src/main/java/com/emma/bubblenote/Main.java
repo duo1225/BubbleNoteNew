@@ -11,12 +11,27 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public class Main extends Application {
+    //connecter database
+    DatabaseConnection jdbcUtils = new DatabaseConnection();
+    //Page Inscription
+    TextField it_name;
+    TextField it_email;
+    PasswordField ip_pwd;
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -29,6 +44,7 @@ public class Main extends Application {
 
         Button login = new Button("Connecter");
         Button clear = new Button("Clear");
+        Button inscrire = new Button("Inscription");
 
         //设置用户名，密码
         t_name.setUserData("duo");
@@ -45,11 +61,13 @@ public class Main extends Application {
 
         gr.add(login,1,2);
         gr.add(clear,0,2);
+        gr.add(inscrire,1,3);
         //设置水平间距
         gr.setHgap(5);
         //设置垂直间距
         gr.setVgap(15);
         gr.setMargin(login,new Insets(0,0,0,120));
+        gr.setMargin(inscrire,new Insets(0,0,0,120));
 
         // 全部居中
         gr.setAlignment(Pos.CENTER);
@@ -79,16 +97,27 @@ public class Main extends Application {
                 if(name.equals("duo") && pwd.equals("123")){
                     System.out.println("Login Success");
                     //打开新窗口
-                    //NoteWindow noteWindow = new NoteWindow();
                     notePage();
                     //需要关闭之前的窗口
                     //stage.close();
                     stage.hide();
-                }else{
+                }else if(user_exist(name)){
+                    notePage();
+                    stage.hide();
+                }
+                else{
                     System.out.println("Failed to login");
-                    //errorPage();
+                    errorPage();
                 }
 
+            }
+        });
+
+        inscrire.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                inscrirePage();
+                stage.hide();
             }
         });
     }
@@ -110,9 +139,10 @@ public class Main extends Application {
     public void errorPage(){
         Text msg = new Text("Nom ou mot de passe incorrect !");
 
-        Group groupError = new Group();
+        BorderPane groupError = new BorderPane();
         groupError.setStyle("-fx-background-color: #a087db");
-        groupError.getChildren().add(msg);
+        // besoin test
+        groupError.setCenter(msg);
 
 
         Scene sceneError = new Scene(groupError);
@@ -120,10 +150,166 @@ public class Main extends Application {
         Stage myStageError = new Stage();
         myStageError.setScene(sceneError);
         myStageError.setTitle("Error");
-        myStageError.setHeight(500);
-        myStageError.setHeight(500);
+        myStageError.setHeight(300);
+        myStageError.setHeight(300);
         myStageError.show();
     }
+
+    public void  inscrirePage(){
+        Stage inscrirePage = new Stage();
+
+        Label i_name = new Label("Nom : ");
+        Label i_email = new Label("Email : ");
+        Label i_pwd = new Label("Password : ");
+        it_name = new TextField();
+        it_email = new TextField();
+        ip_pwd = new PasswordField();
+
+        Button clear = new Button("Clear");
+        Button inscrire = new Button("Inscrire");
+
+        GridPane gr = new GridPane();
+        gr.setStyle("-fx-background-color: #a087db");
+
+        gr.add(i_name,0,0);
+        gr.add(it_name,1,0);
+
+        gr.add(i_email,0,1);
+        gr.add(it_email,1,1);
+
+        gr.add(i_pwd,0,2);
+        gr.add(ip_pwd,1,2);
+
+        gr.add(inscrire,1,3);
+        gr.add(clear,0,3);
+        //设置水平间距
+        gr.setHgap(5);
+        //设置垂直间距
+        gr.setVgap(15);
+        gr.setMargin(inscrire,new Insets(0,0,0,120));
+
+        // 全部居中
+        gr.setAlignment(Pos.CENTER);
+
+        Scene scene = new Scene(gr);
+        inscrirePage.setScene(scene);
+        inscrirePage.setWidth(300);
+        inscrirePage.setHeight(300);
+        inscrirePage.setTitle("Bubble Note - Inscription");
+        //不允许拉伸
+        inscrirePage.setResizable(false);
+        inscrirePage.show();
+
+        inscrire.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                System.out.println("Success inscrire!");
+                String ins_name = it_name.getText();
+                String ins_email = it_email.getText();
+                String ins_pwd = ip_pwd.getText();
+
+                if(user_exist(ins_name)){
+                    System.out.println("Utilisateur déja exixt!");
+                    HBox hBox = new HBox();
+                    Label label = new Label("用户已存在");
+
+                    hBox.setAlignment(Pos.CENTER);
+                    hBox.setSpacing(10);
+                    hBox.getChildren().add(label);
+
+                    Stage stage1 = new Stage();
+                    stage1.setScene(new Scene(hBox,300,200));
+                    stage1.setTitle("ERROR");
+                    stage1.show();
+                }
+                //账户不存在且信息无误
+                else
+                {
+                    try {
+                        Connection conn=jdbcUtils.getConnection();
+                        String sql = "insert into user (nom,password,email) values (?,?,?)";
+                        PreparedStatement ps=conn.prepareStatement(sql);
+                        ps.setString(1,ins_name);
+                        ps.setString(2,ins_pwd);
+                        ps.setString(3,ins_email);
+                        ps.executeUpdate();
+                        //释放资源
+                        jdbcUtils.close(conn,ps);
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
+                    }
+
+                    HBox hBox = new HBox();
+                    Label label = new Label("Success Inscription !");
+
+                    hBox.setAlignment(Pos.CENTER);
+                    hBox.setSpacing(10);
+                    hBox.getChildren().add(label);
+                    Stage stage1 = new Stage();
+                    stage1.setScene(new Scene(hBox,300,200));
+                    stage1.show();
+                    //todo: changer to notePage
+                    //todo : inscrire pas réussir
+                }
+
+            }
+        });
+    }
+
+    //判断是否已存在用户
+    public boolean user_exist(String nom){
+
+        String sql = "select count(*) from user where nom = '"+nom+"'";
+        try {
+            Connection conn=jdbcUtils.getConnection();
+            PreparedStatement ps=conn.prepareStatement(sql);
+            ResultSet rs=ps.executeQuery();
+            rs.next();
+            if(rs.getInt(1)==1){
+                jdbcUtils.close(conn,ps,rs);
+                return true;
+            }
+            jdbcUtils.close(conn,ps,rs);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return false;
+    }
+    //verfier nom avec password
+    public boolean user_right(String nom, String password){
+        String sql = "select count(*) from user where nom = ? and password = ?";
+        try {
+            Connection conn=jdbcUtils.getConnection();
+            PreparedStatement ps=conn.prepareStatement(sql);
+            ps.setString(1,nom);
+            ps.setString(2,password);
+            ResultSet rs=ps.executeQuery();
+            rs.next();
+            if(rs.getInt(1)==1){
+                jdbcUtils.close(conn,ps,rs);
+                return true;
+            }
+            jdbcUtils.close(conn,ps,rs);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        System.out.println("Nom ou password not correct!");
+        HBox hBox = new HBox();
+        Label label = new Label("用户名或密码不正确");
+        ImageView image = new ImageView("No.jpg");
+        image.setFitWidth(150);
+        image.setFitHeight(120);
+        hBox.setAlignment(Pos.CENTER);
+        hBox.setSpacing(10);
+        hBox.getChildren().addAll(image,label);
+        Stage stage1 = new Stage();
+        stage1.setScene(new Scene(hBox,300,200));
+        stage1.setTitle("ERROR");
+        stage1.show();
+        return false;
+    }
+
 }
 
 

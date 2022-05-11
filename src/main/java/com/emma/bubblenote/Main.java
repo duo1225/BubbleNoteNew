@@ -102,7 +102,7 @@ public class Main extends Application {
                     // hide page de connect
                     stage.hide();
                 }else if(user_exist(name)){
-                    notePage();
+                    NoteBook noteBook2 = new NoteBook();
                     stage.hide();
                 }
                 else{

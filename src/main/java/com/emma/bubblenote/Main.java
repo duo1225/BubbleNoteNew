@@ -46,7 +46,7 @@ public class Main extends Application {
         Button clear = new Button("Clear");
         Button inscrire = new Button("Inscription");
 
-        //设置用户名，密码
+        //nom and pwd par default
         t_name.setUserData("duo");
         p_pwd.setUserData("123");
 
@@ -69,7 +69,7 @@ public class Main extends Application {
         gr.setMargin(login,new Insets(0,0,0,120));
         gr.setMargin(inscrire,new Insets(0,0,0,120));
 
-        // 全部居中
+        // all center
         gr.setAlignment(Pos.CENTER);
 
         Scene scene = new Scene(gr);
@@ -96,10 +96,10 @@ public class Main extends Application {
 
                 if(name.equals("duo") && pwd.equals("123")){
                     System.out.println("Login Success");
-                    //打开新窗口
-                    notePage();
-                    //需要关闭之前的窗口
-                    //stage.close();
+                   //Open Editeur
+                    //notePage();
+                    NoteBook noteBook = new NoteBook();
+                    // hide page de connect
                     stage.hide();
                 }else if(user_exist(name)){
                     notePage();
@@ -182,13 +182,13 @@ public class Main extends Application {
 
         gr.add(inscrire,1,3);
         gr.add(clear,0,3);
-        //设置水平间距
+        //horizontal
         gr.setHgap(5);
-        //设置垂直间距
+        //Vertical
         gr.setVgap(15);
         gr.setMargin(inscrire,new Insets(0,0,0,120));
 
-        // 全部居中
+        // All center
         gr.setAlignment(Pos.CENTER);
 
         Scene scene = new Scene(gr);
@@ -196,7 +196,7 @@ public class Main extends Application {
         inscrirePage.setWidth(300);
         inscrirePage.setHeight(300);
         inscrirePage.setTitle("Bubble Note - Inscription");
-        //不允许拉伸
+        //No stretching allowed
         inscrirePage.setResizable(false);
         inscrirePage.show();
 
@@ -211,7 +211,7 @@ public class Main extends Application {
                 if(user_exist(ins_name)){
                     System.out.println("Utilisateur déja exixt!");
                     HBox hBox = new HBox();
-                    Label label = new Label("用户已存在");
+                    Label label = new Label("Utilisateur déja exixt!");
 
                     hBox.setAlignment(Pos.CENTER);
                     hBox.setSpacing(10);
@@ -222,7 +222,7 @@ public class Main extends Application {
                     stage1.setTitle("ERROR");
                     stage1.show();
                 }
-                //账户不存在且信息无误
+                //nom not exist and no problem
                 else
                 {
                     try {
@@ -233,7 +233,7 @@ public class Main extends Application {
                         ps.setString(2,ins_pwd);
                         ps.setString(3,ins_email);
                         ps.executeUpdate();
-                        //释放资源
+                        //free resources
                         jdbcUtils.close(conn,ps);
                     } catch (SQLException ex) {
                         ex.printStackTrace();
@@ -250,6 +250,7 @@ public class Main extends Application {
                     stage1.show();
                     //todo: changer to notePage
                     //todo : inscrire pas réussir
+                    NoteBook insNoteBook = new NoteBook();
                 }
 
             }
@@ -296,13 +297,10 @@ public class Main extends Application {
         }
         System.out.println("Nom ou password not correct!");
         HBox hBox = new HBox();
-        Label label = new Label("用户名或密码不正确");
-        ImageView image = new ImageView("No.jpg");
-        image.setFitWidth(150);
-        image.setFitHeight(120);
+        Label label = new Label("Nom or password not correct");
         hBox.setAlignment(Pos.CENTER);
         hBox.setSpacing(10);
-        hBox.getChildren().addAll(image,label);
+        hBox.getChildren().addAll(label);
         Stage stage1 = new Stage();
         stage1.setScene(new Scene(hBox,300,200));
         stage1.setTitle("ERROR");
